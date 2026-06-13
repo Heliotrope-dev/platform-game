@@ -495,26 +495,46 @@ class Enemy {
   constructor(x, y, type='walker', pl=0, pr=0) {
     this.x=x; this.y=y; this.w=34; this.h=34;
     this.type=type;
-    this.vx = type==='bat' ? 1.2 : (type==='fire' ? 2.2 : 1.4);
-    this.vx *= (Math.random()<.5 ? 1 : -1);
+    const baseSpd = type==='bat' ? (0.8+Math.random()*0.9) : (type==='fire' ? (1.7+Math.random()*1.3) : (0.9+Math.random()*1.0));
+    this.vx = baseSpd * (Math.random()<.5 ? 1 : -1);
     this.vy=0;
     this.patrol=[pl,pr];
-    this.alive=true; this.deadTimer=0;
+    this.alive=true; this.deadTimer=0; this.deadVy=0; this.deadAngle=0;
     this.walkT=0; this.sineY=y;
     this.phase=Math.random()*Math.PI*2;
+    this.hp=3; this.hitFlash=0;
+    this.shootTimer=80+Math.floor(Math.random()*120);
+    this.bullets=[];
   }
-  update(platforms, t) {
-    if (!this.alive) { this.deadTimer--; return; }
+  update(platforms, t, player=null) {
+    if (this.hitFlash>0) this.hitFlash--;
+    this.bullets.forEach(b => { b.x+=b.vx; b.y+=b.vy; b.life--; });
+    this.bullets = this.bullets.filter(b => b.life>0);
+    if (!this.alive) {
+      this.deadTimer--;
+      this.deadVy = Math.min(this.deadVy+0.5, 14);
+      this.y += this.deadVy;
+      this.deadAngle += 0.18;
+      return;
+    }
     this.walkT++;
+    if (player && !player.dead) {
+      this.shootTimer--;
+      if (this.shootTimer<=0) {
+        this.shootTimer = 90+Math.floor(Math.random()*100);
+        const dx=(player.x+player.w/2)-(this.x+this.w/2);
+        const dy=(player.y+player.h/2)-(this.y+this.h/2);
+        const len=Math.hypot(dx,dy)||1;
+        this.bullets.push({x:this.x+this.w/2,y:this.y+this.h/2,vx:dx/len*4.5,vy:dy/len*4.5,life:90});
+      }
+    }
     if (this.type==='bat') {
-      // Sine wave flight
       this.x += this.vx;
       this.y = this.sineY + Math.sin(t*0.04+this.phase)*50;
       if (this.x<this.patrol[0]) { this.x=this.patrol[0]; this.vx*=-1; }
       if (this.x+this.w>this.patrol[1]) { this.x=this.patrol[1]-this.w; this.vx*=-1; }
       return;
     }
-    // Walker / fire enemy
     this.vx = Math.abs(this.vx) * (this.vx<0?-1:1);
     this.x += this.vx;
     if (this.x<this.patrol[0]) { this.x=this.patrol[0]; this.vx*=-1; }
@@ -529,13 +549,36 @@ class Enemy {
       }
     }
   }
+  hit() {
+    if (!this.alive) return;
+    this.hp--;
+    this.hitFlash=14;
+    if (this.hp<=0) {
+      this.alive=false; this.deadTimer=55; this.deadVy=-6; this.deadAngle=0;
+      Audio.sfx('stomp');
+    }
+  }
   draw(camX) {
+    this.bullets.forEach(b => {
+      const bx = b.x - camX;
+      if (bx<-20||bx>W+20) return;
+      ctx.globalAlpha = Math.min(1, b.life/20);
+      ctx.shadowBlur=10; ctx.shadowColor = this.type==='bat'?'#aa44ff':(this.type==='fire'?'#ff6600':'#ff2200');
+      ctx.fillStyle = this.type==='bat'?'#cc66ff':(this.type==='fire'?'#ff8800':'#ff4444');
+      ctx.beginPath(); ctx.arc(bx, b.y, 5, 0, Math.PI*2); ctx.fill();
+      ctx.shadowBlur=0; ctx.globalAlpha=1;
+    });
     if (!this.alive) {
-      if (this.deadTimer <= 0) return;
-      // Squished
+      if (this.deadTimer<=0) return;
       const sx = this.x - camX;
-      ctx.fillStyle = this.type==='bat' ? '#884488' : (this.type==='fire' ? '#cc4400' : '#8B4513');
-      ctx.fillRect(sx, this.y+this.h-8, this.w, 8);
+      const alpha = Math.min(1, this.deadTimer/15);
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      ctx.translate(sx+this.w/2, this.y+this.h/2);
+      ctx.rotate(this.deadAngle);
+      ctx.fillStyle = this.type==='bat'?'#884488':(this.type==='fire'?'#cc4400':'#8B4513');
+      ctx.fillRect(-this.w/2, -this.h/2, this.w, this.h);
+      ctx.restore();
       return;
     }
     const sx = this.x - camX;
@@ -544,6 +587,12 @@ class Enemy {
     if (this.type==='bat') this._drawBat(sx, t);
     else if (this.type==='fire') this._drawFire(sx, t);
     else this._drawWalker(sx, t);
+    if (this.hitFlash>0) {
+      ctx.globalAlpha = this.hitFlash/14*0.55;
+      ctx.fillStyle='#ff2200';
+      ctx.beginPath(); ctx.arc(sx+this.w/2, this.y+this.h/2, this.w*0.7, 0, Math.PI*2); ctx.fill();
+      ctx.globalAlpha=1;
+    }
   }
   _drawWalker(sx, t) {
     const cx=sx+this.w/2, bot=this.y+this.h;
@@ -1045,7 +1094,8 @@ class Player {
     this.onGround=false; this.dir=1;
     this.walkT=0; this.invincible=0;
     this.dead=false; this.deadTimer=0; this.deadVy=0;
-    this.standingOn=null;  // tracks which platform player is on
+    this.standingOn=null;
+    this.bullets=[]; this.shootCooldown=0;
   }
   update(platforms, t) {
     if (this.dead) {
@@ -1055,6 +1105,9 @@ class Player {
       return;
     }
     if (this.invincible>0) this.invincible--;
+    if (this.shootCooldown>0) this.shootCooldown--;
+    this.bullets.forEach(b => { b.x+=b.vx; b.life--; });
+    this.bullets = this.bullets.filter(b => b.life>0);
 
     // ── Moving-platform carry (must happen before input/physics) ──
     // Apply the platform's delta from last frame so the player
@@ -1071,7 +1124,7 @@ class Player {
     // Input
     const left  = keys['ArrowLeft']  || keys['KeyA'];
     const right = keys['ArrowRight'] || keys['KeyD'];
-    const jump  = keys['ArrowUp']    || keys['KeyW'] || keys['Space'];
+    const jump  = keys['ArrowUp']    || keys['KeyW'];
 
     const accel = this.onGround ? ACCEL : AIR_ACCEL;
     const fric  = this.onGround ? FRIC  : AIR_FRIC;
@@ -1115,6 +1168,11 @@ class Player {
     }
     if (this.onGround && Math.abs(this.vx)>0.5) this.walkT++;
   }
+  shoot() {
+    if (this.shootCooldown>0||this.dead) return;
+    this.shootCooldown=18;
+    this.bullets.push({x:this.x+(this.dir>0?this.w+2:-12), y:this.y+this.h*0.38, vx:this.dir*11, life:55});
+  }
   die(game) {
     if (this.invincible>0||this.dead) return;
     Audio.sfx('hurt');
@@ -1123,6 +1181,14 @@ class Player {
     game.lives--;
   }
   draw(camX) {
+    this.bullets.forEach(b => {
+      const bx = b.x - camX;
+      if (bx<-20||bx>W+20) return;
+      ctx.shadowBlur=10; ctx.shadowColor='#88eeff';
+      ctx.fillStyle='#aaf0ff';
+      ctx.beginPath(); ctx.arc(bx, b.y, 5, 0, Math.PI*2); ctx.fill();
+      ctx.shadowBlur=0;
+    });
     if (this.dead) {
       const sx=this.x-camX;
       ctx.save(); ctx.globalAlpha=0.6;
@@ -1278,27 +1344,29 @@ function generateLevel(id) {
   const gaps  = [];   // gaps:            {x, w}
   let cx = 0;
 
-  gSegs.push({ x: 0, w: 290 });  // safe spawn zone
+  gSegs.push({ x: 0, w: 290, y: GH });  // safe spawn zone
   cx = 290;
+  let prevSegY = GH;
 
   const totalTarget = 3800 + id * 450;
   while (cx < totalTarget - 650) {
-    // Ground segment
     const gw = rf(200, 500);
-    gSegs.push({ x: cx, w: gw });
+    const steps = [-30, -15, 0, 0, 15, 30];
+    const segY = Math.max(GH-60, Math.min(GH+30, prevSegY + steps[Math.floor(r()*steps.length)]));
+    gSegs.push({ x: cx, w: gw, y: segY });
+    prevSegY = segY;
     cx += gw;
-    // Maybe gap
     if (r() < cfg.gapFreq && cx > 400) {
       const gpW = rf(cfg.gapW[0], cfg.gapW[1]);
       gaps.push({ x: cx, w: gpW });
       cx += gpW;
     }
   }
-  gSegs.push({ x: cx, w: 520 });  // safe end zone
+  gSegs.push({ x: cx, w: 520, y: prevSegY });  // safe end zone
   const LEVEL_W = cx + 540;
 
-  // Build ground platforms
-  gSegs.forEach(seg => plats.push(new Platform(seg.x, GH, seg.w, 60)));
+  // Build ground platforms with staggered heights
+  gSegs.forEach(seg => plats.push(new Platform(seg.x, seg.y, seg.w, 80)));
 
   // ── Spacing helpers ────────────────────────────────────────
   // floatRects tracks all placed floating platform rects so we
@@ -1382,7 +1450,7 @@ function generateLevel(id) {
   });
   gSegs.forEach(seg => {
     for (let gx2 = seg.x + 55; gx2 < seg.x + seg.w - 55; gx2 += rf(48, 105)) {
-      if (r() < 0.32) coins.push(new Coin(gx2, GH - 28));
+      if (r() < 0.32) coins.push(new Coin(gx2, seg.y - 28));
     }
   });
 
@@ -1399,7 +1467,7 @@ function generateLevel(id) {
       const pl = Math.max(seg.x + 8, ex - rf(70, 190));
       const pr = Math.min(seg.x + seg.w - 8, ex + rf(70, 190));
       if (pr - pl < 55) continue;
-      enemies.push(new Enemy(ex, GH - 34, rp(nonBat), pl, pr));
+      enemies.push(new Enemy(ex, seg.y - 34, rp(nonBat), pl, pr));
     }
   });
 
@@ -1545,23 +1613,22 @@ const game = {
       c.update(t);
       if (!c.collected && !pl.dead &&
           Math.hypot(pl.x+pl.w/2-c.x, pl.y+pl.h/2-c.y) < 22) {
-        c.collected=true; c.popping=true;
+        c.collected=true;
         this.score+=50; this.levelScore+=50;
         Audio.sfx('coin');
-        spawnParticles(c.x, c.y, '#ffdd00', 6, 3);
       }
     });
 
     // Enemies
     if (this.state === STATE.PLAY) {
       this.enemies.forEach(e => {
-        e.update(this.platforms, t);
+        e.update(this.platforms, t, pl);
         if (!e.alive || pl.dead) return;
         const hit = rectsOverlap(pl, {x:e.x,y:e.y,w:e.w,h:e.h});
         if (hit && pl.invincible===0) {
           // Stomp from above
           if (pl.vy>0 && pl.y+pl.h-pl.vy <= e.y+e.h*0.4) {
-            e.alive=false; e.deadTimer=40;
+            e.alive=false; e.deadTimer=55; e.deadVy=-6; e.deadAngle=0;
             pl.vy=JUMP_VEL*0.55;
             this.score+=100; this.levelScore+=100;
             Audio.sfx('stomp');
@@ -1571,6 +1638,32 @@ const game = {
           }
         }
       });
+      // Player bullets vs enemies
+      if (!pl.dead) {
+        for (const b of pl.bullets) {
+          if (b.life<=0) continue;
+          for (const e of this.enemies) {
+            if (!e.alive) continue;
+            if (b.x>e.x-5&&b.x<e.x+e.w+5&&b.y>e.y-5&&b.y<e.y+e.h+5) {
+              b.life=0; e.hit();
+              if (!e.alive) { this.score+=100; this.levelScore+=100; spawnParticles(e.x+e.w/2, e.y+e.h/2, '#ff8844', 8, 4); }
+              break;
+            }
+          }
+        }
+      }
+      // Enemy bullets vs player
+      if (!pl.dead && pl.invincible===0) {
+        outer: for (const e of this.enemies) {
+          for (const b of e.bullets) {
+            if (b.life<=0) continue;
+            if (b.x>pl.x-5&&b.x<pl.x+pl.w+5&&b.y>pl.y-5&&b.y<pl.y+pl.h+5) {
+              b.life=0; pl.die(this); break outer;
+            }
+          }
+        }
+      }
+      this.enemies = this.enemies.filter(e => e.alive || e.deadTimer>0);
 
       // Flag
       if (this.flag && pl.x+pl.w >= this.flag.x && !pl.dead) {
@@ -1922,6 +2015,11 @@ document.addEventListener('keydown', e => {
       game.prevState = game.state;
       game.state = STATE.HELP;
     }
+  }
+  // Shoot
+  if (e.code==='Space' && (game.state===STATE.PLAY||game.state===STATE.BOSS)) {
+    e.preventDefault();
+    if (game.player) game.player.shoot();
   }
   // Level skip: , = 上一关  . = 下一关  (任何时候都能用)
   if (e.code==='Comma') {
