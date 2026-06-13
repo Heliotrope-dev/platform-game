@@ -593,6 +593,13 @@ class Enemy {
       ctx.beginPath(); ctx.arc(sx+this.w/2, this.y+this.h/2, this.w*0.7, 0, Math.PI*2); ctx.fill();
       ctx.globalAlpha=1;
     }
+    // HP dots above enemy (only when damaged)
+    if (this.hp < 3) {
+      for (let i=0; i<3; i++) {
+        ctx.fillStyle = i < this.hp ? '#ff4444' : '#333333';
+        ctx.beginPath(); ctx.arc(sx+this.w/2 + (i-1)*9, this.y-10, 4, 0, Math.PI*2); ctx.fill();
+      }
+    }
   }
   _drawWalker(sx, t) {
     const cx=sx+this.w/2, bot=this.y+this.h;
@@ -2016,8 +2023,8 @@ document.addEventListener('keydown', e => {
       game.state = STATE.HELP;
     }
   }
-  // Shoot
-  if (e.code==='Space' && (game.state===STATE.PLAY||game.state===STATE.BOSS)) {
+  // Shoot — only on initial keydown, not key-repeat
+  if (e.code==='Space' && !e.repeat && (game.state===STATE.PLAY||game.state===STATE.BOSS)) {
     e.preventDefault();
     if (game.player) game.player.shoot();
   }
