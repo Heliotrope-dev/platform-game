@@ -1103,6 +1103,7 @@ class Player {
     this.dead=false; this.deadTimer=0; this.deadVy=0;
     this.standingOn=null;
     this.bullets=[]; this.shootCooldown=0;
+    this.hp=3; this.maxHp=3;
   }
   update(platforms, t) {
     if (this.dead) {
@@ -1180,9 +1181,23 @@ class Player {
     this.shootCooldown=18;
     this.bullets.push({x:this.x+(this.dir>0?this.w+2:-12), y:this.y+this.h*0.38, vx:this.dir*11, life:55});
   }
+  hurt(game) {
+    if (this.invincible>0||this.dead) return;
+    Audio.sfx('hurt');
+    this.hp--;
+    spawnParticles(this.x+this.w/2, this.y+this.h/2, '#ff4444', 8, 3);
+    if (this.hp<=0) {
+      this.hp=0;
+      this.dead=true; this.deadVy=-12; this.deadTimer=80;
+      game.lives--;
+    } else {
+      this.invincible=100;
+    }
+  }
   die(game) {
     if (this.invincible>0||this.dead) return;
     Audio.sfx('hurt');
+    this.hp=0;
     this.dead=true; this.deadVy=-12; this.deadTimer=80;
     spawnParticles(this.x+this.w/2, this.y+this.h/2, '#ff4444', 12);
     game.lives--;
@@ -1665,7 +1680,7 @@ const game = {
           for (const b of e.bullets) {
             if (b.life<=0) continue;
             if (b.x>pl.x-5&&b.x<pl.x+pl.w+5&&b.y>pl.y-5&&b.y<pl.y+pl.h+5) {
-              b.life=0; pl.die(this); break outer;
+              b.life=0; pl.hurt(this); break outer;
             }
           }
         }
@@ -1697,7 +1712,7 @@ const game = {
         // Boss projectiles
         for (const proj of this.boss.projectiles) {
           if (proj.alive && rectsOverlap(pl, proj.hitbox)) {
-            pl.die(this);
+            pl.hurt(this);
             proj.alive=false; break;
           }
         }
@@ -1798,6 +1813,15 @@ const game = {
     ctx.fillStyle='#FFD700';
     ctx.font='bold 20px "Courier New"';
     ctx.fillText(`★ ${this.score}`, 14, 30);
+    // Player HP bar
+    if (this.player) {
+      ctx.fillStyle='#aaaaaa'; ctx.font='12px "Courier New"'; ctx.fillText('HP', 14, 44);
+      for (let i=0; i<this.player.maxHp; i++) {
+        ctx.fillStyle = i < this.player.hp ? '#44ee44' : '#333333';
+        ctx.fillRect(36+i*18, 33, 14, 10);
+        ctx.strokeStyle='#888888'; ctx.lineWidth=1; ctx.strokeRect(36+i*18, 33, 14, 10);
+      }
+    }
     // Lives
     for (let i=0;i<this.lives;i++) {
       ctx.fillStyle='#ff3333';
