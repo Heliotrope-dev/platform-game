@@ -1814,20 +1814,19 @@ const game = {
     ctx.fillStyle='#FFD700';
     ctx.font='bold 20px "Courier New"';
     ctx.fillText(`★ ${this.score}`, 14, 30);
-    // Player HP hearts (green = full, grey = lost)
+    // Player HP hearts (green full / grey empty) + Lives (red)
+    ctx.font='20px sans-serif';
     if (this.player) {
-      ctx.font='20px sans-serif';
       for (let i=0; i<this.player.maxHp; i++) {
         ctx.globalAlpha = i < this.player.hp ? 1.0 : 0.22;
         ctx.fillStyle='#44ff44';
-        ctx.fillText('♥', 130+i*24, 30);
+        ctx.fillText('❤', 130+i*28, 30);
       }
       ctx.globalAlpha=1;
     }
-    // Lives
-    for (let i=0;i<this.lives;i++) {
+    for (let i=0; i<this.lives; i++) {
       ctx.fillStyle='#ff3333';
-      ctx.font='20px sans-serif'; ctx.fillText('❤',200+i*26,30);
+      ctx.fillText('❤', 224+i*28, 30);
     }
     // Level name
     const lname = this.level<=3 ? `第${this.level}关 — ${THEMES[this.level].name}` : 'BOSS — 巫师魔王';
