@@ -1623,9 +1623,10 @@ const game = {
           this.state = STATE.GAME_OVER;
           Audio.stop(); return;
         }
-        // Respawn
+        // Respawn with full HP
         pl.dead=false; pl.deadVy=0; pl.vy=0; pl.vx=0;
         pl.x=Math.max(80, this.camX+80); pl.y=H-180;
+        pl.hp=pl.maxHp;
         pl.invincible=150;
       }
     }
@@ -1813,14 +1814,15 @@ const game = {
     ctx.fillStyle='#FFD700';
     ctx.font='bold 20px "Courier New"';
     ctx.fillText(`★ ${this.score}`, 14, 30);
-    // Player HP bar
+    // Player HP hearts (green = full, grey = lost)
     if (this.player) {
-      ctx.fillStyle='#aaaaaa'; ctx.font='12px "Courier New"'; ctx.fillText('HP', 14, 44);
+      ctx.font='20px sans-serif';
       for (let i=0; i<this.player.maxHp; i++) {
-        ctx.fillStyle = i < this.player.hp ? '#44ee44' : '#333333';
-        ctx.fillRect(36+i*18, 33, 14, 10);
-        ctx.strokeStyle='#888888'; ctx.lineWidth=1; ctx.strokeRect(36+i*18, 33, 14, 10);
+        ctx.globalAlpha = i < this.player.hp ? 1.0 : 0.22;
+        ctx.fillStyle='#44ff44';
+        ctx.fillText('♥', 130+i*24, 30);
       }
+      ctx.globalAlpha=1;
     }
     // Lives
     for (let i=0;i<this.lives;i++) {
