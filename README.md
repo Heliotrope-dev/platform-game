@@ -40,3 +40,9 @@ const AIR_FRIC = 0.95;  // 空中惯性
 ## 运行
 
 直接用浏览器打开 `mario_game.html`，无需安装任何依赖。
+
+## Creators
+
+- Heliotrope
+- Claude Code
+- Codex
