@@ -37,7 +37,7 @@ function boot({noAudio=false,blockedStorage=false}={}) {
   const sandbox={document,window,console,localStorage:{getItem(k){if(blockedStorage)throw Error('disabled');return store.get(k)??null;},setItem(k,v){if(blockedStorage)throw Error('disabled');store.set(k,v);}},
     requestAnimationFrame(fn){frames.push(fn);},setTimeout(){return 1;},clearTimeout(){}};
   vm.createContext(sandbox);
-  vm.runInContext(source+'\nglobalThis.api={game,keys,STATE,Player,Platform,Enemy,Boss,Projectile,Coin,PowerBean,Audio,loop,startRun,setPaused,toggleHelp,toggleSound,syncUI,clearInput,chooseUpgrade,getPaused:()=>paused};',sandbox);
+  vm.runInContext(source+'\nglobalThis.api={game,keys,STATE,Player,Platform,Enemy,Boss,Projectile,Coin,PowerBean,particles,spawnParticles,findSafeSpawn,Audio,loop,startRun,setPaused,toggleHelp,toggleSound,syncUI,clearInput,chooseUpgrade,getPaused:()=>paused};',sandbox);
   return {...sandbox.api,document,nodes,handlers,tones,touch,store,upgrades};
 }
 
@@ -196,4 +196,50 @@ test('respawn clears pressure while preserving boss HP; defeat clears dangerous 
   b.game.update();assert.equal(boss.hp,50);assert.equal(boss.hazards.length,0);assert.equal(boss.projectiles.length,0);assert.equal(b.game.player.dead,false);
   const minion=new b.Enemy(500,480);boss.minions=[minion];boss.hp=1;boss.hitFlash=0;boss.hit(1);
   assert.equal(boss.alive,false);assert.equal(minion.alive,false);assert.equal(boss.projectiles.length,0);assert.equal(boss.hazards.length,0);
+});
+
+function emptyWorld(b){
+  b.startRun();b.game.platforms=[new b.Platform(0,520,2000,60)];b.game.enemies=[];b.game.coins=[];b.game.flag=null;
+  b.game.player.x=90;b.game.player.y=476;b.game.player.vy=0;
+}
+test('ordinary contact respects both shield and remaining health',()=>{
+  const b=boot();emptyWorld(b);const pl=b.game.player;
+  const enemy=new b.Enemy(90,476);enemy.update=()=>{};b.game.enemies=[enemy];b.game.shields=1;
+  b.game.update();assert.equal(pl.dead,false);assert.equal(pl.hp,5);assert.equal(b.game.shields,0);
+  pl.invincible=0;b.game.update();assert.equal(pl.hp,4);assert.equal(pl.dead,false);
+});
+test('energy protection blocks ordinary damage but does not save pit falls',()=>{
+  const b=boot();emptyWorld(b);const pl=b.game.player;pl.powerup=600;
+  pl.hurt(b.game);assert.equal(pl.hp,5);
+  pl.y=700;b.game.update();assert.equal(pl.dead,true);assert.equal(b.game.lives,4);
+});
+test('lava overlay harms a grounded player even when the ground platform resolves first',()=>{
+  const b=boot();emptyWorld(b);const lava=new b.Platform(75,520,50,14);lava.lava=true;b.game.platforms.push(lava);
+  b.game.update();assert.equal(b.game.player.hp,4);
+  b.game.player.invincible=0;b.game.player.powerup=600;b.game.update();assert.equal(b.game.player.hp,4);
+});
+test('particles expire instead of accumulating forever',()=>{
+  const b=boot();emptyWorld(b);b.spawnParticles(100,450,'#fff',16);assert.equal(b.particles.length,16);
+  for(let i=0;i<70;i++)b.game.update();assert.equal(b.particles.length,0);
+});
+test('respawn discards the old moving platform, bullets and fire cooldown',()=>{
+  const b=boot();emptyWorld(b);const pl=b.game.player;
+  pl.standingOn=new b.Platform(800,300,100,20,{axis:'x',range:100,speed:1});
+  pl.bullets=[{x:100,y:400,vx:11,life:40}];pl.shootCooldown=18;pl.dead=true;pl.deadTimer=1;b.game.lives=2;
+  b.game.update();assert.equal(pl.standingOn,null);assert.equal(pl.onGround,false);assert.equal(pl.bullets.length,0);assert.equal(pl.shootCooldown,0);
+});
+test('level summary includes the same completion bonus as the total score',()=>{
+  const b=boot();emptyWorld(b);b.game.flag={x:100,y:300,h:220};b.game.update();
+  assert.equal(b.game.state,b.STATE.LEVEL_END);assert.equal(b.game.score,500);assert.equal(b.game.levelScore,500);
+});
+test('a defeated boss wins even if the last-life death timer expires during the victory animation',()=>{
+  const b=boot();b.startRun();b.game.startLevel(4);b.game.boss.alive=false;b.game.boss.deadTimer=2;
+  b.game.player.dead=true;b.game.player.deadTimer=1;b.game.lives=0;
+  for(let i=0;i<4;i++)b.game.update();assert.equal(b.game.state,b.STATE.WIN);assert.equal(b.game.score,2000);
+  b.game.update();assert.equal(b.game.score,2000);
+});
+test('switching away from help preserves manual-resume behavior and clears queued jumping',()=>{
+  const b=boot();b.startRun();b.game.player.jumpBuffer=6;b.game.player.jumpHeld=true;
+  b.setPaused(true);assert.equal(b.game.player.jumpBuffer,0);assert.equal(b.game.player.jumpHeld,false);
+  b.setPaused(false);b.toggleHelp();b.handlers.get('window:blur')();b.toggleHelp();assert.equal(b.getPaused(),true);
 });

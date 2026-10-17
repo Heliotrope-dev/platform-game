@@ -244,6 +244,7 @@ function clearInput() {
   for (const k in keys) keys[k] = false;
   document.querySelectorAll('[data-key]').forEach(button => button.classList.remove('active'));
   heldPointers.clear();
+  if(game.player){game.player.jumpBuffer=0;game.player.jumpHeld=false;}
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -254,7 +255,7 @@ function findSafeSpawn(platforms, camX) {
   const candidates = [camX + 150, camX + 200, camX + 80, camX + 300, 80];
   for (const tx of candidates) {
     for (const p of platforms) {
-      if (p.rect.w < 80) continue;
+      if (p.lava || p.rect.w < 80) continue;
       if (tx >= p.rect.x + 30 && tx <= p.rect.x + p.rect.w - 30) {
         return { x: tx - 16, y: p.rect.y - 80 };
       }
@@ -904,7 +905,7 @@ class Player {
     this.bullets.push({x:this.x+(this.dir>0?this.w+2:-12), y:this.y+this.h*0.38, vx:this.dir*11, life:55});
   }
   hurt(game) {
-    if (this.invincible>0||this.dead) return;
+    if (this.invincible>0||this.dead||this.powerup>0) return;
     if(game.shields>0){game.shields--;this.invincible=60;Audio.sfx('coin');spawnParticles(this.x+this.w/2,this.y+this.h/2,'#c8edaa',10,4);return;}
     Audio.sfx('hurt');
     this.hp--;
@@ -1340,6 +1341,18 @@ const game = {
 
     if (this.state === STATE.MENU || this.state === STATE.GAME_OVER || this.state === STATE.WIN || this.state === STATE.HELP || this.state === STATE.UPGRADE) return;
 
+    updateParticles();
+
+    // Finish an earned victory before processing any pending player death.
+    if(this.state===STATE.BOSS && this.boss && !this.boss.alive){
+      this.boss.update(this.player,this.platforms,this.tick);
+      if(this.boss.deadTimer<0){
+        this.score+=2000;this.levelScore+=2000;
+        this.state=STATE.WIN;Audio.stop();
+      }
+      return;
+    }
+
     if (this.state === STATE.LEVEL_END) {
       this.levelEndTimer--;
       if (this.levelEndTimer <= 0) {
@@ -1369,6 +1382,7 @@ const game = {
         }
         // Respawn with full HP — find safe ground position
         pl.dead=false; pl.deadVy=0; pl.vy=0; pl.vx=0;
+        pl.standingOn=null;pl.onGround=false;pl.bullets=[];pl.shootCooldown=0;
         if (this.state === STATE.PLAY) {
           const sp = findSafeSpawn(this.platforms, this.camX);
           pl.x = sp.x; pl.y = sp.y;
@@ -1437,7 +1451,7 @@ const game = {
             spawnParticles(e.x+e.w/2, e.y, '#ff8844', 8, 4);
             if (Math.random() < 0.08) this.powerBeans.push(new PowerBean(e.x+e.w/2, e.y));
           } else {
-            pl.die(this);
+            pl.hurt(this);
           }
         }
       });
@@ -1473,15 +1487,16 @@ const game = {
       }
       this.enemies = this.enemies.filter(e => e.alive || e.deadTimer>0);
 
-      // Lava platform damage
-      if (!pl.dead && pl.invincible===0 && pl.standingOn && pl.standingOn.lava) {
-        pl.hurt(this);
-      }
+      // Lava may overlay ground at the same height; test feet against its surface.
+      if (!pl.dead && pl.onGround && this.platforms.some(p => {
+        const r=p.rect;
+        return p.lava && pl.x<r.x+r.w && pl.x+pl.w>r.x && Math.abs(pl.y+pl.h-r.y)<2;
+      })) pl.hurt(this);
 
       // Flag
       if (this.flag && pl.x+pl.w >= this.flag.x && !pl.dead) {
         Audio.sfx('levelup');
-        this.score += 500;
+        this.score += 500; this.levelScore += 500;
         this.state = STATE.LEVEL_END;
         this.levelEndTimer = 180;
       }
@@ -1512,7 +1527,7 @@ const game = {
             if (b.x>m.x&&b.x<m.x+m.w&&b.y>m.y&&b.y<m.y+m.h) {
               b.life=0; m.hit();
               if (!m.alive) {
-                this.score+=150; this.totalKills++;
+                this.score+=150; this.levelScore+=150; this.totalKills++;
                 spawnParticles(m.x+m.w/2, m.y, '#ff8844', 8, 4);
                 if (pl.powerup===0 && Math.random() < 0.25) this.powerBeans.push(new PowerBean(m.x+m.w/2, m.y));
               }
@@ -1550,11 +1565,11 @@ const game = {
           if (m.alive && rectsOverlap(pl, {x:m.x,y:m.y,w:m.w,h:m.h})) {
             if (pl.powerup > 0) {
               m.alive=false; m.deadTimer=40;
-              this.score+=150; this.totalKills++; Audio.sfx('stomp');
+              this.score+=150; this.levelScore+=150; this.totalKills++; Audio.sfx('stomp');
               spawnParticles(m.x+m.w/2, m.y, '#00ffaa', 8, 4);
             } else if (pl.vy>0 && pl.y+pl.h-pl.vy<=m.y+m.h*0.4) {
               m.alive=false; m.deadTimer=40; pl.vy=JUMP_VEL*0.5;
-              this.score+=150; this.totalKills++; Audio.sfx('stomp');
+              this.score+=150; this.levelScore+=150; this.totalKills++; Audio.sfx('stomp');
               spawnParticles(m.x+m.w/2, m.y, '#ff8844', 8, 4);
               if (Math.random() < 0.25) this.powerBeans.push(new PowerBean(m.x+m.w/2, m.y));
             } else { pl.hurt(this); break; }
@@ -1575,11 +1590,6 @@ const game = {
             rectsOverlap(pl, {x:this.boss.x,y:this.boss.y,w:this.boss.w,h:this.boss.h})) {
           pl.hurt(this);
         }
-      }
-      if (!this.boss.alive && this.boss.deadTimer < 0) {
-        this.score += 2000;
-        this.state = STATE.WIN;
-        Audio.stop();
       }
     }
 
@@ -1867,9 +1877,15 @@ document.addEventListener('keydown', e => {
   if (isActiveRun() && !paused) keys[code]=true;
 });
 document.addEventListener('keyup',e => {keys[e.code]=false;});
-window.addEventListener('blur',() => {clearInput();setPaused(true);});
+function suspendRun() {
+  clearInput();
+  if(game.state===STATE.HELP && [STATE.PLAY,STATE.BOSS,STATE.LEVEL_END].includes(game.prevState)) paused=true;
+  else setPaused(true);
+  Audio.setPaused(true);syncUI();
+}
+window.addEventListener('blur',suspendRun);
 document.addEventListener('visibilitychange',() => {
-  if (document.hidden) {clearInput();setPaused(true);Audio.setPaused(true);}
+  if (document.hidden) suspendRun();
   else Audio.setPaused(paused || game.state===STATE.HELP);
 });
 // Separate pointer ownership lets a thumb hold a direction while another jumps.
