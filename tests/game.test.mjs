@@ -143,3 +143,57 @@ test('exploration reward pays once; upgrades reset only on a new run',()=>{
   b.game.state=b.STATE.UPGRADE;b.chooseUpgrade('shield');assert.equal(b.game.upgrades.shield,2);
   b.startRun();assert.equal(b.game.upgrades.shield,0);assert.equal(b.game.score,0);
 });
+
+test('boss fan pressure increases across phases and retains bounded projectile lifetime',()=>{
+  const b=boot();
+  for(const [hp,count] of [[100,3],[60,5],[30,7]]){
+    const boss=new b.Boss();boss.hp=hp;boss._shootFireballs();
+    assert.equal(boss.projectiles.length,count);
+    for(const shot of boss.projectiles){assert.equal(shot.type,'shard');assert.ok(Math.hypot(shot.vx,shot.vy)>4);}
+  }
+  const shot=new b.Projectile(400,200,0,0,'shard');for(let i=0;i<301;i++)shot.update();assert.equal(shot.alive,false);
+});
+test('boss columns are locked, warned and leave safe horizontal lanes',()=>{
+  const b=boot(),boss=new b.Boss(),player={x:300,y:476,w:30,h:44};
+  boss.hp=30;boss.lastPhase=3;boss.state='float';boss.attackIndex=0;boss._nextState(player);
+  assert.equal(boss.state,'beam_warn');assert.equal(boss.hazards.length,3);
+  assert.ok(boss.hazards.every(h=>h.warn>=45&&h.x>=0&&h.x+h.w<=960));
+  assert.ok(boss.hazards.reduce((n,h)=>n+h.w,0)<960/3);
+  const positions=boss.hazards.map(h=>h.x);player.x=800;
+  boss.update(player,[],1);assert.deepEqual(boss.hazards.map(h=>h.x),positions);
+});
+test('warning columns cause no early damage and active columns respect invincibility',()=>{
+  const b=boot();b.startRun();b.game.startLevel(4);
+  const pl=b.game.player;pl.x=80;pl.y=476;pl.vy=0;
+  b.game.boss.hazards=[{x:70,w:68,warn:3,life:32}];
+  b.game.update();assert.equal(pl.hp,5);b.game.update();assert.equal(pl.hp,5);
+  b.game.update();assert.equal(pl.hp,4);b.game.update();assert.equal(pl.hp,4);
+});
+test('recovery rewards counters and the warning body is non-damaging',()=>{
+  const b=boot(),boss=new b.Boss();boss.state='cast';boss.hit(3);assert.equal(boss.hp,97);
+  boss.hitFlash=0;boss.state='recover';boss.hit(3);assert.equal(boss.hp,91);assert.equal(boss.lastDamage,6);
+  assert.equal(boss.vulnerable,true);assert.equal(boss.bodyDangerous,false);
+  for(const state of ['dash_warn','slam_warn','beam_warn','phase_intro']){boss.state=state;assert.equal(boss.bodyDangerous,false);}
+});
+test('all boss phases cycle attacks without stuck states or runaway entity counts',()=>{
+  const b=boot(),player={x:100,y:476,w:30,h:44,dead:false};
+  for(const hp of [100,60,30]){
+    const boss=new b.Boss();boss.hp=hp;const seen=new Set();
+    for(let t=0;t<4000;t++){
+      boss.update(player,[],t);boss.draw();seen.add(boss.state);
+      assert.ok(Number.isFinite(boss.x)&&Number.isFinite(boss.y));
+      assert.ok(boss.projectiles.length<32);assert.ok(boss.minions.filter(m=>m.alive).length<=3);
+      assert.ok(boss.hazards.length<=3);
+    }
+    assert.ok(seen.has('cast'));assert.ok(seen.has('slam'));assert.ok(seen.has('dash'));assert.ok(seen.has('recover'));
+    if(hp<70)assert.ok(seen.has('beam_warn'));
+  }
+});
+test('respawn clears pressure while preserving boss HP; defeat clears dangerous leftovers',()=>{
+  const b=boot();b.startRun();b.game.startLevel(4);const boss=b.game.boss;
+  boss.hp=50;boss.hazards=[{x:60,w:68,warn:0,life:30}];boss.projectiles=[new b.Projectile(80,500,2,0,'shard')];
+  b.game.player.dead=true;b.game.player.deadTimer=1;b.game.lives=2;
+  b.game.update();assert.equal(boss.hp,50);assert.equal(boss.hazards.length,0);assert.equal(boss.projectiles.length,0);assert.equal(b.game.player.dead,false);
+  const minion=new b.Enemy(500,480);boss.minions=[minion];boss.hp=1;boss.hitFlash=0;boss.hit(1);
+  assert.equal(boss.alive,false);assert.equal(minion.alive,false);assert.equal(boss.projectiles.length,0);assert.equal(boss.hazards.length,0);
+});

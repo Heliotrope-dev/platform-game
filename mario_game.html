@@ -30,7 +30,7 @@ button{font:inherit;cursor:pointer;border:1px solid var(--line);color:var(--ink)
       <section class="overlay" id="pause-overlay" aria-label="游戏已暂停" hidden><div class="pause-card"><div class="eyebrow">TAKE A BREATH</div><h2>休息一下，冒险还在</h2><p>游戏已暂停。准备好后继续。</p><button class="primary" id="resume-button">继续游戏</button></div></section>
       <section class="overlay" id="upgrade-overlay" aria-label="选择能力" hidden><div class="upgrade-panel"><div class="eyebrow">MAKE IT YOUR RUN</div><h2>下一程，带上新本领</h2><p>选择一项能力，立即前往下一区域。能力在本局叠加，每项最多两级。</p><div class="upgrade-grid"><button class="upgrade-option" data-upgrade="air"><strong>踏风</strong><span>每级增加一次空中跳跃。跨过更宽的缺口，寻找高处的路线。</span><small id="rank-air">尚未获得 · 选择升级</small></button><button class="upgrade-option" data-upgrade="rapid"><strong>连发晶核</strong><span>按住射击持续开火，每级缩短射击间隔。</span><small id="rank-rapid">尚未获得 · 选择升级</small></button><button class="upgrade-option" data-upgrade="magnet"><strong>引光石</strong><span>吸引附近金币，每级扩大吸附范围。</span><small id="rank-magnet">尚未获得 · 选择升级</small></button><button class="upgrade-option" data-upgrade="shield"><strong>守护纹章</strong><span>每级在进入新关时获得一层护盾，抵挡一次碰撞伤害。深坑无法抵挡。</span><small id="rank-shield">尚未获得 · 选择升级</small></button></div></div></section>
       <section class="overlay" id="result-overlay" aria-label="本局结算" hidden><div class="result-card"><div class="eyebrow" id="result-eyebrow">ADVENTURE LOG</div><h2 id="result-title">这次，离终点更近了</h2><p id="result-description">每一次出发，都有新的路线。</p><div class="result-stats"><div><span>本局得分</span><strong id="result-score">0</strong></div><div><span>收集金币</span><strong id="result-coins">0</strong></div><div><span>击败敌人</span><strong id="result-kills">0</strong></div></div><button class="primary" id="retry-button">再玩一次</button></div></section>
-      <section class="overlay" id="help-overlay" aria-label="操作说明" hidden><div class="help-card"><div class="help-head"><h2>操作与玩法</h2><button id="close-help">返回游戏</button></div><div class="help-grid"><div><h3>键盘操作</h3><div class="key-row"><span>左右移动</span><span><kbd>←</kbd> <kbd>→</kbd> / <kbd>A</kbd> <kbd>D</kbd></span></div><div class="key-row"><span>跳跃（支持提前按键与边缘起跳）</span><span><kbd>↑</kbd> / <kbd>W</kbd></span></div><div class="key-row"><span>发射子弹</span><kbd>空格</kbd></div><div class="key-row"><span>暂停 / 继续</span><kbd>P</kbd> / <kbd>Esc</kbd></div><div class="key-row"><span>切换角色 / 静音</span><span><kbd>Z</kbd> / <kbd>M</kbd></span></div><div class="key-row"><span>说明 / 全屏</span><span><kbd>H</kbd> / <kbd>F</kbd></span></div><div class="key-row"><span>结束后重开 / 自由选关</span><span><kbd>R</kbd> / <kbd>,</kbd> <kbd>.</kbd></span></div></div><div><h3>冒险指南</h3><ul><li>状态栏的绿色格表示生命值，剩余机会单独计数。掉进深坑会消耗一次机会。</li><li>收集金币获得 50 分，踩倒小怪或用子弹击败小怪获得 100 分。</li><li>能量豆提供 10 秒保护、双倍普通得分和三倍 Boss 子弹伤害。</li><li>星环守卫有 100 点生命值，分为三个阶段。用子弹攻击，在守卫下砸时寻找踩头机会。</li><li>每关有可选探索目标，完成可额外获得 300 分。通关后从四种能力中选择一项，本局最多选择三次。手机使用画面下方按钮。切换窗口会自动暂停，返回后手动继续。</li></ul></div></div><p class="help-tip">历史最佳保存在当前浏览器。清除浏览器数据后会重置。</p></div></section>
+      <section class="overlay" id="help-overlay" aria-label="操作说明" hidden><div class="help-card"><div class="help-head"><h2>操作与玩法</h2><button id="close-help">返回游戏</button></div><div class="help-grid"><div><h3>键盘操作</h3><div class="key-row"><span>左右移动</span><span><kbd>←</kbd> <kbd>→</kbd> / <kbd>A</kbd> <kbd>D</kbd></span></div><div class="key-row"><span>跳跃（支持提前按键与边缘起跳）</span><span><kbd>↑</kbd> / <kbd>W</kbd></span></div><div class="key-row"><span>发射子弹</span><kbd>空格</kbd></div><div class="key-row"><span>暂停 / 继续</span><kbd>P</kbd> / <kbd>Esc</kbd></div><div class="key-row"><span>切换角色 / 静音</span><span><kbd>Z</kbd> / <kbd>M</kbd></span></div><div class="key-row"><span>说明 / 全屏</span><span><kbd>H</kbd> / <kbd>F</kbd></span></div><div class="key-row"><span>结束后重开 / 自由选关</span><span><kbd>R</kbd> / <kbd>,</kbd> <kbd>.</kbd></span></div></div><div><h3>冒险指南</h3><ul><li>状态栏的绿色格表示生命值，剩余机会单独计数。掉进深坑会消耗一次机会。</li><li>收集金币获得 50 分，踩倒小怪或用子弹击败小怪获得 100 分。</li><li>能量豆提供 10 秒保护、双倍普通得分和三倍 Boss 子弹伤害。</li><li>星环守卫有 100 点生命值，分为三个阶段。扇形晶弹、预警横扫、重砸冲击波与星落光柱会随阶段增强。离开虚线标记躲避强攻击，核心暴露时造成双倍伤害，也可以踩头反击。</li><li>每关有可选探索目标，完成可额外获得 300 分。通关后从四种能力中选择一项，本局最多选择三次。手机使用画面下方按钮。切换窗口会自动暂停，返回后手动继续。</li></ul></div></div><p class="help-tip">历史最佳保存在当前浏览器。清除浏览器数据后会重置。</p></div></section>
     </div>
     <div class="toolbar"><div class="actions"><button class="primary" id="play-button">开始游戏</button><button id="sound-button" aria-pressed="false">声音：开</button><button id="help-button" aria-expanded="false">操作说明</button><button id="fullscreen-button">全屏</button></div><span class="session-status" id="session-status" role="status">准备出发</span></div>
     <div class="run-build" id="build-readout" hidden></div>
@@ -363,6 +363,20 @@ function drawCastleBg(camX) {
   ctx.fillStyle='#e1e4d8';for(let i=0;i<55;i++){ctx.globalAlpha=.25+Math.sin(THEME_TICK*.025+i)*.2;ctx.fillRect((i*137)%W,90+(i*67)%280,1.5,1.5);}ctx.globalAlpha=1;
 }
 
+function drawBolt(x,y,vx,vy,kind='enemy',variant=0,age=0) {
+  if(x< -45||x>W+45)return;
+  const palettes=kind==='player' ? [['#d8efad','#83b9a5'],['#c8eeef','#78b8cf'],['#e5edaf','#96be85']] : [['#ffe3b0','#e79a83'],['#e9d0fa','#ae86c5'],['#ffe1bd','#d88c76']];
+  const [core,edge]=palettes[variant%3],boss=kind==='boss',r=boss?9:5;
+  ctx.save();ctx.translate(x,y);ctx.rotate(Math.atan2(vy||0,vx||1));
+  const trail=ctx.createLinearGradient(-r*5,0,r,0);trail.addColorStop(0,'#ffffff00');trail.addColorStop(1,edge);
+  ctx.fillStyle=trail;ctx.globalAlpha=.6;ctx.beginPath();ctx.moveTo(-r*5,0);ctx.quadraticCurveTo(-r*2,-r*.9,0,-r*.55);ctx.lineTo(r,0);ctx.lineTo(0,r*.55);ctx.quadraticCurveTo(-r*2,r*.9,-r*5,0);ctx.fill();ctx.globalAlpha=1;
+  ctx.shadowBlur=boss?13:7;ctx.shadowColor=edge;
+  ctx.fillStyle=edge;ctx.beginPath();ctx.moveTo(r+2,0);ctx.lineTo(0,-r);ctx.lineTo(-r,0);ctx.lineTo(0,r);ctx.closePath();ctx.fill();
+  ctx.shadowBlur=0;ctx.fillStyle=core;ctx.beginPath();ctx.moveTo(r,0);ctx.lineTo(0,-r*.45);ctx.lineTo(-r*.5,0);ctx.lineTo(0,r*.45);ctx.closePath();ctx.fill();
+  if(boss){ctx.strokeStyle=core;ctx.lineWidth=1;ctx.beginPath();ctx.arc(0,0,r+3,age*.06,age*.06+Math.PI*1.3);ctx.stroke();}
+  ctx.restore();
+}
+
 // ═══════════════════════════════════════════════════════════
 //  PLATFORM
 // ═══════════════════════════════════════════════════════════
@@ -539,13 +553,9 @@ class Enemy {
   }
   draw(camX) {
     this.bullets.forEach(b => {
-      const bx = b.x - camX;
-      if (bx<-20||bx>W+20) return;
-      ctx.globalAlpha = Math.min(1, b.life/20);
-      ctx.shadowBlur=10; ctx.shadowColor = this.type==='bat'?'#aa44ff':(this.type==='fire'?'#ff6600':'#ff2200');
-      ctx.fillStyle = this.type==='bat'?'#cc66ff':(this.type==='fire'?'#ff8800':'#ff4444');
-      ctx.beginPath(); ctx.arc(bx, b.y, 5, 0, Math.PI*2); ctx.fill();
-      ctx.shadowBlur=0; ctx.globalAlpha=1;
+      ctx.save();ctx.globalAlpha=Math.min(1,b.life/20);
+      drawBolt(b.x-camX,b.y,b.vx,b.vy,'enemy',this.type==='bat'?1:this.type==='fire'?2:0);
+      ctx.restore();
     });
     if (!this.alive) {
       if (this.deadTimer<=0) return;
@@ -610,29 +620,18 @@ class Projectile {
     this.type=type; this.alive=true; this.t=0;
   }
   update() {
-    this.t++;
-    this.x+=this.vx; this.y+=this.vy;
-    if (this.type==='fireball') this.vy += 0.15;
-    if (this.x<-50||this.x>5000||this.y>H+50) this.alive=false;
+    this.t++;this.x+=this.vx;this.y+=this.vy;
+    if(this.type==='fireball')this.vy+=.15;
+    if(this.t>300||this.x< -50||this.x>W+50||this.y< -70||this.y>H+50)this.alive=false;
   }
   draw(camX) {
-    if (!this.alive) return;
-    const sx = this.x - camX;
-    if (sx<-30||sx>W+30) return;
-    const pulse = Math.sin(this.t*0.3)*3;
-    if (this.type==='fireball') {
-      ctx.shadowBlur=15; ctx.shadowColor='#ff4400';
-      ctx.fillStyle='#ff8800';
-      ctx.beginPath(); ctx.arc(sx, this.y, 10+pulse, 0, Math.PI*2); ctx.fill();
-      ctx.fillStyle='#ffcc00';
-      ctx.beginPath(); ctx.arc(sx-2, this.y-2, 5, 0, Math.PI*2); ctx.fill();
-      ctx.shadowBlur=0;
-    } else if (this.type==='shockwave') {
-      ctx.fillStyle=`rgba(180,80,255,${0.7-this.t*0.02})`;
-      ctx.fillRect(sx-20, this.y, 40, 15);
-      ctx.fillStyle=`rgba(255,180,255,${0.5-this.t*0.02})`;
-      ctx.fillRect(sx-10, this.y-5, 20, 8);
-    }
+    if(!this.alive)return;
+    const x=this.x-camX;if(x< -40||x>W+40)return;
+    if(this.type==='shockwave'){
+      ctx.save();ctx.translate(x,this.y);ctx.strokeStyle='#ffd7a9';ctx.lineWidth=3;
+      ctx.shadowBlur=12;ctx.shadowColor='#db947e';ctx.beginPath();ctx.arc(0,0,10,-Math.PI,0);ctx.stroke();ctx.shadowBlur=0;
+      ctx.strokeStyle='#d6b5c9';ctx.lineWidth=1;ctx.beginPath();ctx.arc(0,0,14,-Math.PI,0);ctx.stroke();ctx.restore();
+    }else drawBolt(x,this.y,this.vx,this.vy,'boss',this.type==='shard'?0:1,this.t);
   }
   get hitbox() { return {x:this.x-10,y:this.y-10,w:20,h:20}; }
 }
@@ -642,172 +641,142 @@ class Projectile {
 // ═══════════════════════════════════════════════════════════
 class Boss {
   constructor() {
-    this.x = W * 0.75;
-    this.y = 150;
-    this.targetY = 150;
-    this.w = 64; this.h = 96;
-    this.hp = 100; this.maxHp = 100;
-    this.state = 'float'; // float|descend|slam|cast|hurt|dead
-    this.stateTimer = 120;
-    this.hitFlash  = 0;
-    this.summonTimer = 200 + Math.floor(Math.random()*100);
-    this.walkT     = 0;
-    this.dir       = -1;
-    this.projectiles = [];
-    this.alive = true;
-    this.deadTimer = 0;
-    this.minions   = [];
-    this.velX      = 0;
-    // phase 1: hp 6-4, phase 2: hp 3-2, phase 3: hp 1
+    this.x=W*.75;this.y=150;this.targetY=150;this.w=64;this.h=96;
+    this.hp=100;this.maxHp=100;this.alive=true;this.deadTimer=0;
+    this.state='float';this.stateTimer=90;this.hitFlash=0;this.walkT=0;this.dir=-1;this.velX=0;
+    this.summonTimer=300;this.projectiles=[];this.minions=[];this.hazards=[];
+    this.attackIndex=0;this.lastPhase=1;this.aim={x:W/2,y:H-70};this.dashDir=-1;this.lastDamage=0;
   }
-  get phase() {
-    if (this.hp > 80) return 1;
-    if (this.hp > 40) return 2;
-    return 3;
-  }
-  update(player, platforms, t) {
-    if (!this.alive) { this.deadTimer--; return; }
-    this.walkT++;
-    if (this.hitFlash>0) this.hitFlash--;
-
-    // Independent summon timer
+  get phase(){return this.hp>70?1:this.hp>35?2:3;}
+  get vulnerable(){return this.state==='slam'||this.state==='recover';}
+  get bodyDangerous(){return ['float','cast','descend','dash'].includes(this.state);}
+  get attackLabel(){return {float:'观察守卫动作',cast:'晶簇弹幕 · 即将发射',slam_warn:'重砸预警 · 离开标记',descend:'重砸中 · 准备跳跃',slam:'核心暴露 · 双倍伤害',recover:'核心暴露 · 双倍伤害',dash_warn:'横扫预警 · 跳上平台',dash:'高速横扫',beam_warn:'星落预警 · 离开光柱',phase_intro:'阶段转换 · 准备迎战'}[this.state]||'星环守卫';}
+  resetPressure(){this.projectiles=[];this.hazards=[];this.state='float';this.stateTimer=100;this.targetY=150;}
+  update(player,platforms,t) {
+    if(!this.alive){this.deadTimer--;return;}
+    this.walkT++;if(this.hitFlash>0)this.hitFlash--;
+    if(this.phase!==this.lastPhase){
+      this.lastPhase=this.phase;this.state='phase_intro';this.stateTimer=72;
+      this.hazards=[];this.projectiles=[];this.attackIndex=0;
+    }
+    this.hazards.forEach(h=>{if(h.warn>0)h.warn--;else h.life--;});
+    this.hazards=this.hazards.filter(h=>h.life>0);
     this.summonTimer--;
-    if (this.summonTimer <= 0) {
-      const base = this.phase === 3 ? 100 : (this.phase === 2 ? 150 : 220);
-      this.summonTimer = base + Math.floor(Math.random()*80);
-      this._summonMinion();
+    if(this.summonTimer<=0&&this.state==='float'){
+      this._summonMinion();this.summonTimer=[0,300,240,180][this.phase];
     }
-
-    // Float bob
-    const bobY = Math.sin(t*0.03)*12;
-
-    this.stateTimer--;
-    if (this.stateTimer <= 0) {
-      this._nextState(player);
+    if(!player.dead){this.stateTimer--;if(this.stateTimer<=0)this._nextState(player);}
+    if(this.state==='float'){
+      this.y+=(this.targetY+Math.sin(t*.03)*10-this.y)*.08;
+      const target=player.x+180+Math.sin(t*.018)*80;
+      this.velX=(this.velX+(target-this.x)*.004)*.94;
+      this.velX=Math.max(-3.2,Math.min(3.2,this.velX));this.x+=this.velX;
+      this.x=Math.max(70,Math.min(W-this.w-50,this.x));
+    }else if(this.state==='slam_warn'){
+      this.x+=(this.aim.x-this.w/2-this.x)*.12;
+    }else if(this.state==='descend'){
+      this.y=Math.min(this.y+13+this.phase*2,H-40-this.h);
+      if(this.y>=H-40-this.h){this._doSlam();this.state='slam';this.stateTimer=58-this.phase*6;}
+    }else if(this.state==='dash_warn'){
+      this.x+=((this.dashDir<0?W-this.w-35:35)-this.x)*.15;
+      this.y+=(this.targetY-this.y)*.15;
+    }else if(this.state==='dash'){
+      this.x+=this.dashDir*(10+this.phase*1.7);
+      if(this.x<=25||this.x>=W-this.w-25){this.x=Math.max(25,Math.min(W-this.w-25,this.x));this.state='recover';this.stateTimer=45;this.targetY=155;}
+    }else if(this.state==='recover'||this.state==='phase_intro'){
+      this.y+=(this.targetY-this.y)*.055;
     }
-
-    // Move toward target Y
-    const speed = 2 + (3-this.phase)*0.5;
-    if (this.state==='descend') {
-      if (this.y < this.targetY) this.y = Math.min(this.y+speed*2, this.targetY);
-    } else if (this.state==='float') {
-      this.y = this.targetY + bobY;
-      // Variable-speed drift toward player
-      const tgtX = player.x + 120 + Math.sin(t*0.018)*90;
-      const dxb = tgtX - this.x;
-      this.velX += dxb * 0.004;
-      this.velX *= 0.94;
-      this.velX = Math.max(-3.5, Math.min(3.5, this.velX));
-      this.x += this.velX;
-      this.x = Math.max(W*0.45, Math.min(W-this.w-20, this.x));
-    }
-
-    this.dir = (this.x > player.x) ? -1 : 1;
-
-    // Projectiles
-    this.projectiles.forEach(p => p.update());
-    this.projectiles = this.projectiles.filter(p => p.alive);
-    // Homing: gently steer fireballs within 20° of player
-    if (player && !player.dead) {
-      this.projectiles.forEach(p => {
-        if (!p.homing) return;
-        const pdx = (player.x+player.w/2) - p.x;
-        const pdy = (player.y+player.h/2) - p.y;
-        const tgtAng = Math.atan2(pdy, pdx);
-        const curAng = Math.atan2(p.vy, p.vx);
-        let diff = tgtAng - curAng;
-        while (diff > Math.PI)  diff -= 2*Math.PI;
-        while (diff < -Math.PI) diff += 2*Math.PI;
-        if (Math.abs(diff) < Math.PI/9) {
-          const turn = Math.sign(diff) * Math.min(Math.abs(diff)*0.12, 0.04);
-          const spd = Math.hypot(p.vx, p.vy);
-          const newAng = curAng + turn;
-          p.vx = Math.cos(newAng)*spd; p.vy = Math.sin(newAng)*spd;
-        }
-      });
-    }
-
-    // Minions
-    this.minions.forEach(m => m.update(platforms, t, player));
-    this.minions = this.minions.filter(m => m.alive || m.deadTimer>0);
+    this.dir=this.x>player.x?-1:1;
+    this.projectiles.forEach(p=>p.update());this.projectiles=this.projectiles.filter(p=>p.alive);
+    this.minions.forEach(m=>m.update(platforms,t,player));this.minions=this.minions.filter(m=>m.alive||m.deadTimer>0);
   }
-  _nextState(player) {
-    const rand = Math.random();
-    const ph = this.phase;
-    if (this.state==='descend') {
-      // Do slam
-      this._doSlam(player);
-      this.state='slam'; this.stateTimer=80;
-    } else if (this.state==='slam') {
-      // Rise back up
-      this.state='float'; this.targetY = 130 + Math.random()*80;
-      this.stateTimer = 100 + Math.random()*60;
-    } else if (this.state==='cast') {
-      // Shoot
-      this._shootFireballs(player);
-      this.state='float'; this.stateTimer=90/ph + Math.random()*40;
-    } else {
-      // float → decide
-      if (rand < 0.45) {
-        this.state='descend'; this.targetY=380; this.stateTimer=60;
-      } else {
-        this.state='cast'; this.stateTimer=50;
+  _nextState(player){
+    if(this.state==='descend'){this.stateTimer=15;return;}
+    if(this.state==='slam_warn'){this.state='descend';this.stateTimer=45;return;}
+    if(this.state==='cast'){
+      this._shootFireballs();this.state='recover';this.stateTimer=32;this.targetY=150;return;
+    }
+    if(this.state==='dash_warn'){this.state='dash';this.stateTimer=75;return;}
+    if(this.state==='slam'||this.state==='dash'||this.state==='beam_warn'){
+      this.state='recover';this.stateTimer=48;this.targetY=145;return;
+    }
+    if(this.state!=='float'){
+      this.state='float';this.targetY=140+Math.sin(this.attackIndex)*35;this.stateTimer=76-this.phase*12;return;
+    }
+    const patterns=this.phase===1?['fan','slam','fan','dash']:this.phase===2?['fan','beam','slam','dash']:['beam','fan','dash','slam','fan'];
+    const attack=patterns[this.attackIndex++%patterns.length];
+    this.aim={x:player.x+player.w/2,y:player.y+player.h/2};
+    if(attack==='fan'){this.state='cast';this.stateTimer=48-this.phase*4;}
+    if(attack==='slam'){this.state='slam_warn';this.stateTimer=55;this.aim.x=Math.max(70,Math.min(W-70,this.aim.x));}
+    if(attack==='dash'){
+      this.state='dash_warn';this.stateTimer=55;
+      this.dashDir=player.x<W/2?-1:1;
+      this.targetY=Math.max(155,Math.min(H-40-this.h,player.y+player.h/2-this.h/2));
+    }
+    if(attack==='beam'){
+      this.state='beam_warn';const warning=62-this.phase*5;this.stateTimer=warning;
+      const offsets=this.phase===3?[-160,0,160]:[0,210];
+      for(const offset of offsets){
+        const x=Math.max(28,Math.min(W-96,this.aim.x+offset-34));
+        if(!this.hazards.some(h=>Math.abs(h.x-x)<80))this.hazards.push({x,w:68,warn:warning,life:32});
       }
     }
   }
-  _shootFireballs(player) {
-    const ph = this.phase;
-    const cx = this.x + this.w/2, cy = this.y + this.h/2;
-    const dx = player.x - cx, dy = (player.y+player.h/2) - cy;
-    const dist = Math.sqrt(dx*dx+dy*dy)||1;
-    const spd = (5 + ph) * 0.75;
-    const vx = dx/dist*spd, vy = dy/dist*spd;
-    const p0 = new Projectile(cx, cy, vx, vy); p0.homing = true;
-    this.projectiles.push(p0);
-    Audio.sfx('fireball');
-    if (ph >= 2) {
-      const angle = 0.3;
-      const p1 = new Projectile(cx, cy, vx*Math.cos(angle)-vy*Math.sin(angle), vx*Math.sin(angle)+vy*Math.cos(angle));
-      p1.homing = true; this.projectiles.push(p1);
+  _shootFireballs(){
+    const count=this.phase*2+1,cx=this.x+this.w/2,cy=this.y+this.h/2;
+    const aim=Math.atan2(this.aim.y-cy,this.aim.x-cx),speed=4.3+this.phase*.65;
+    for(let i=0;i<count;i++){
+      const angle=aim+(i-(count-1)/2)*.19;
+      this.projectiles.push(new Projectile(cx,cy,Math.cos(angle)*speed,Math.sin(angle)*speed,'shard'));
     }
-    if (ph === 3) {
-      const angle = -0.3;
-      const p2 = new Projectile(cx, cy, vx*Math.cos(angle)-vy*Math.sin(angle), vx*Math.sin(angle)+vy*Math.cos(angle));
-      p2.homing = true; this.projectiles.push(p2);
-    }
-  }
-  _doSlam(player) {
-    // Shockwave left and right
     Audio.sfx('fireball');
-    this.projectiles.push(new Projectile(this.x+this.w/2, this.y+this.h-10, -4, 0, 'shockwave'));
-    this.projectiles.push(new Projectile(this.x+this.w/2, this.y+this.h-10, 4, 0, 'shockwave'));
-    spawnParticles(this.x+this.w/2, this.y+this.h, '#9060ff', 12, 5);
   }
-  _summonMinion() {
-    if (this.minions.filter(m => m.alive).length >= 2) return;
-    Audio.sfx('summon');
-    const groundY = H - 40 - 34;
-    const spd = 2.0 + Math.random() * 0.6 + (this.phase === 3 ? 0.5 : 0);
-    const fromLeft = Math.random() < 0.5;
-    const m = fromLeft
-      ? new Enemy(20,     groundY, 'walker', 0,        W/2 + 80)
-      : new Enemy(W - 54, groundY, 'walker', W/2 - 80, W);
-    m.vx = fromLeft ? spd : -spd;
-    this.minions.push(m);
-    spawnParticles(fromLeft ? 40 : W - 40, groundY, '#aa44ff', 8);
+  _doSlam(){
+    Audio.sfx('fireball');const x=this.x+this.w/2,y=H-49;
+    this.projectiles.push(new Projectile(x,y,-(4+this.phase*.65),0,'shockwave'),new Projectile(x,y,4+this.phase*.65,0,'shockwave'));
+    spawnParticles(x,H-42,'#e8ba98',14,5);
   }
-  hit(damage=1) {
-    if (this.hitFlash>0 || !this.alive) return false;
-    this.hp = Math.max(0, this.hp - damage);
-    this.hitFlash = 10;
-    Audio.sfx('boss_hit');
-    spawnParticles(this.x+this.w/2, this.y, '#ff4444', 10, 5);
-    spawnParticles(this.x+this.w/2, this.y, '#ffaa00', 8, 3);
-    if (this.hp <= 0) { this.alive=false; this.deadTimer=150; Audio.sfx('boss_die'); }
+  _summonMinion(){
+    if(this.minions.filter(m=>m.alive).length>=(this.phase===3?3:2))return;
+    const left=this.attackIndex%2===0,spd=1.7+this.phase*.35;
+    const m=new Enemy(left?20:W-54,H-74,'walker',left?0:W/2-80,left?W/2+80:W);
+    m.vx=left?spd:-spd;this.minions.push(m);Audio.sfx('summon');
+    spawnParticles(left?40:W-40,H-60,'#c7a9d1',8);
+  }
+  hit(damage=1){
+    if(this.hitFlash>0||!this.alive)return false;
+    this.lastDamage=Math.min(this.hp,damage*(this.vulnerable?2:1));this.hp-=this.lastDamage;this.hitFlash=10;
+    Audio.sfx('boss_hit');spawnParticles(this.x+this.w/2,this.y+this.h/2,'#f0c496',10,4);
+    if(this.hp<=0){this.alive=false;this.deadTimer=150;this.hazards=[];this.projectiles=[];this.minions.forEach(m=>{m.alive=false;m.deadTimer=0;});Audio.sfx('boss_die');}
     return true;
   }
-  get stompBox() { return {x:this.x, y:this.y, w:this.w, h:20}; }
+  get stompBox(){return {x:this.x,y:this.y,w:this.w,h:20};}
+  drawWarnings(){
+    ctx.save();
+    for(const h of this.hazards){
+      const active=h.warn<=0;
+      ctx.fillStyle=active?'#f2c29699':'#dca78a24';ctx.fillRect(h.x,90,h.w,H-130);
+      ctx.strokeStyle=active?'#fff0c8':'#e8c095';ctx.lineWidth=active?3:1;
+      ctx.setLineDash(active?[]:[5,6]);ctx.strokeRect(h.x,90,h.w,H-130);ctx.setLineDash([]);
+      if(active){ctx.fillStyle='#fff0ca';ctx.fillRect(h.x+h.w/2-3,90,6,H-130);}
+      else{ctx.font='bold 11px sans-serif';ctx.fillStyle='#ffe4b7';ctx.textAlign='center';ctx.fillText('星落',h.x+h.w/2,H-57);ctx.textAlign='left';}
+    }
+    if(this.state==='slam_warn'){
+      ctx.fillStyle='#e8bc9133';ctx.fillRect(this.aim.x-48,90,96,H-130);
+      ctx.strokeStyle='#f4c99d';ctx.setLineDash([6,5]);ctx.strokeRect(this.aim.x-48,90,96,H-130);ctx.setLineDash([]);
+    }
+    if(this.state==='dash_warn'){
+      ctx.fillStyle='#d6ad9b33';ctx.fillRect(20,this.targetY,W-40,this.h);
+      ctx.strokeStyle='#e2bba2';ctx.setLineDash([8,7]);ctx.strokeRect(20,this.targetY,W-40,this.h);ctx.setLineDash([]);
+      ctx.fillStyle='#ffe0af';ctx.font='bold 18px sans-serif';ctx.fillText(this.dashDir<0?'← 横扫预警':'横扫预警 →',W/2-55,this.targetY+this.h/2);
+    }
+    if(this.state==='cast'){
+      ctx.strokeStyle='#edbd8e77';ctx.setLineDash([4,6]);ctx.beginPath();ctx.moveTo(this.x+this.w/2,this.y+this.h/2);ctx.lineTo(this.aim.x,this.aim.y);ctx.stroke();ctx.setLineDash([]);
+    }
+    ctx.restore();
+  }
   draw(camX=0) {
+    if(this.alive)this.drawWarnings();
     this.minions.forEach(m=>m.draw(camX));this.projectiles.forEach(p=>p.draw(camX));
     if(!this.alive&&this.deadTimer<0)return;
     const x=this.x-camX,y=this.alive?this.y:this.y+(150-this.deadTimer)*2,c=this.phase===3?'#e7a18c':this.phase===2?'#d0b4e5':'#b7d6d8';
@@ -817,7 +786,7 @@ class Boss {
     _rr(-8,38,15,31,6,'#7d8fa3');_rr(this.w-7,38,15,31,6,'#7d8fa3');
     _rr(5,3,this.w-10,36,12,'#b8c6c7','#e2e8d7',2);_rr(12,14,this.w-24,11,4,'#26364b');
     ctx.fillStyle=c;ctx.fillRect(17,17,8,5);ctx.fillRect(this.w-25,17,8,5);
-    _ci(this.w/2,58,14,'#26364b',c,2);_ci(this.w/2,58,7,c);
+    _ci(this.w/2,58,14,'#26364b',c,2);_ci(this.w/2,58,this.vulnerable?10:7,this.vulnerable?'#ffdfad':c);
     ctx.strokeStyle=c;ctx.lineWidth=3;ctx.beginPath();ctx.ellipse(this.w/2,-5,38,11,Math.sin(this.walkT*.03)*.3,0,Math.PI*2);ctx.stroke();
     if(this.state==='slam'){ctx.strokeStyle='#f1d4a5';ctx.lineWidth=3;ctx.beginPath();ctx.ellipse(this.w/2,this.h+4,43,8,0,0,Math.PI*2);ctx.stroke();}
     ctx.restore();
@@ -957,14 +926,7 @@ class Player {
     game.lives--;
   }
   draw(camX) {
-    this.bullets.forEach(b => {
-      const bx = b.x - camX;
-      if (bx<-20||bx>W+20) return;
-      ctx.shadowBlur=10; ctx.shadowColor='#88eeff';
-      ctx.fillStyle='#aaf0ff';
-      ctx.beginPath(); ctx.arc(bx, b.y, 5, 0, Math.PI*2); ctx.fill();
-      ctx.shadowBlur=0;
-    });
+    this.bullets.forEach(b => drawBolt(b.x-camX,b.y,b.vx,0,'player',CHAR_INDEX));
     if (this.dead) {
       const sx=this.x-camX;
       ctx.save(); ctx.globalAlpha=0.6;
@@ -1281,12 +1243,10 @@ function generateLevel(id) {
 // Boss arena platforms (fixed, no scroll)
 function buildBossArena() {
   return [
-    new Platform(0, H-40, W, 60),        // ground
-    new Platform(100, H-160, 180, 20),   // left low
-    new Platform(W-280, H-160, 180, 20), // right low
-    new Platform(W/2-110, H-280, 220, 20), // center high
-    new Platform(80, H-340, 130, 20),    // left high
-    new Platform(W-210, H-340, 130, 20), // right high
+    new Platform(0,H-40,W,60),
+    new Platform(70,H-152,160,20),new Platform(W-230,H-152,160,20),
+    new Platform(W/2-75,H-235,150,18,{axis:'x',range:170,speed:1.1}),
+    new Platform(195,H-310,125,18),new Platform(W-320,H-310,125,18)
   ];
 }
 
@@ -1417,6 +1377,7 @@ const game = {
         }
         pl.hp=pl.maxHp; pl.powerup=0;
         pl.airJumpsUsed=0;pl.jumpBuffer=0;pl.jumpHeld=false;pl.coyoteFrames=0;
+        if(this.state===STATE.BOSS)this.boss.resetPressure();
         pl.invincible=150;
       }
     }
@@ -1539,7 +1500,7 @@ const game = {
               b.y > this.boss.y && b.y < this.boss.y+this.boss.h) {
             b.life = 0;
             const dmg = pl.powerup > 0 ? 3 : 1;
-            if (this.boss.hit(dmg)) { this.score += 50*dmg; this.levelScore += 50*dmg; }
+            if (this.boss.hit(dmg)) { this.score += 50*this.boss.lastDamage; this.levelScore += 50*this.boss.lastDamage; }
             break;
           }
         }
@@ -1561,8 +1522,8 @@ const game = {
         }
       }
       if (!pl.dead && pl.invincible===0) {
-        // Stomp boss (any state, 5 damage)
-        if (this.boss.alive &&
+        // Stomps reward the exposed core after a committed attack.
+        if (this.boss.alive && this.boss.vulnerable &&
             rectsOverlap(pl, this.boss.stompBox) &&
             pl.vy>0 && pl.y+pl.h-pl.vy <= this.boss.y+22) {
           if (this.boss.hit(5)) {
@@ -1578,6 +1539,12 @@ const game = {
             }
           }
         }
+        // Marked columns become dangerous only after their warning expires.
+        if(pl.powerup===0){
+          for(const h of this.boss.hazards){
+            if(h.warn<=0&&h.life>0&&rectsOverlap(pl,{x:h.x,y:90,w:h.w,h:H-130})){pl.hurt(this);break;}
+          }
+        }
         // Minion collision
         for (const m of this.boss.minions) {
           if (m.alive && rectsOverlap(pl, {x:m.x,y:m.y,w:m.w,h:m.h})) {
@@ -1590,7 +1557,7 @@ const game = {
               this.score+=150; this.totalKills++; Audio.sfx('stomp');
               spawnParticles(m.x+m.w/2, m.y, '#ff8844', 8, 4);
               if (Math.random() < 0.25) this.powerBeans.push(new PowerBean(m.x+m.w/2, m.y));
-            } else { pl.die(this); break; }
+            } else { pl.hurt(this); break; }
           }
         }
         // Minion bullets vs player (immune when powered up)
@@ -1604,9 +1571,9 @@ const game = {
           }
         }
         // Boss body collision (immune when powered up)
-        if (pl.powerup === 0 && this.boss.alive && this.boss.state!=='slam' && this.boss.state!=='hurt' &&
+        if (pl.powerup === 0 && this.boss.alive && this.boss.bodyDangerous &&
             rectsOverlap(pl, {x:this.boss.x,y:this.boss.y,w:this.boss.w,h:this.boss.h})) {
-          pl.die(this);
+          pl.hurt(this);
         }
       }
       if (!this.boss.alive && this.boss.deadTimer < 0) {
@@ -1733,12 +1700,13 @@ const game = {
     }
     if (this.state===STATE.BOSS && this.boss?.alive) {
       const x=W/2-200,y=85,ratio=Math.max(0,this.boss.hp/this.boss.maxHp);
-      _rr(x,y,400,49,11,'rgba(15,29,34,0.94)','#ffffff24',1);
+      _rr(x,y,400,65,11,'rgba(15,29,34,0.94)','#ffffff24',1);
       ctx.font='bold 11px -apple-system, sans-serif';ctx.fillStyle='#f1eedf';
       ctx.fillText('星环守卫  /  阶段 '+this.boss.phase,x+14,y+18);
       ctx.textAlign='right';ctx.fillStyle='#ffc18d';ctx.fillText(this.boss.hp+' / '+this.boss.maxHp,x+386,y+18);ctx.textAlign='left';
       _rr(x+14,y+29,372,7,3,'#ffffff15');
       if (ratio>0) _rr(x+14,y+29,372*ratio,7,3,ratio>.4?'#ffc18d':'#ed8e85');
+      ctx.fillStyle=this.boss.vulnerable?'#c8edaa':'#dcc9b7';ctx.font='10px -apple-system,sans-serif';ctx.fillText(this.boss.attackLabel,x+14,y+53);
     }
     ctx.restore();
   },
