@@ -12,8 +12,8 @@ Key Conventions
 - All rendering uses HTML5 Canvas 2D API (ctx)
 - Audio uses Web Audio API (AudioContext) — no external sound files
 - Levels are procedurally generated per play via LCG seeded RNG
-- Git remote: https://github.com/a13989358483-web/platform-game
-- GitHub Pages: https://a13989358483-web.github.io/platform-game/mario_game.html
+- Git remote: https://github.com/Heliotrope-dev/platform-game
+- GitHub Pages: https://heliotrope-dev.github.io/platform-game/mario_game.html
 
 Player System
 - 5 HP (green hearts) + 5 lives (red hearts) displayed in HUD top-left at 16px font
